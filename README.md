@@ -1,34 +1,50 @@
 # Inkwell — Django + React learning platform
 
-
 The backend uses **Python, Django 5.2, Django REST Framework and PostgreSQL**. The frontend uses **React and Vite**, with session Context and local component state. There is no Redux, repository layer, microservice or custom password hashing.
 
-## Docker setup
+Inkwell is a learning platform with public courses, learner practice activities, a lecturer authoring workspace and administrator tools. It is also a readable example of a Django monolith with a separate React frontend.
 
-For a container-based development environment, follow [DOCKER.md](docs/DOCKER.md). It explains each command, the three containers, explicit migrations/import, persistent data and daily start/stop. The Docker frontend uses port **5174** and a separate database so it can coexist with the local setup below.
+![Inkwell course library](docs/screenshots/catalogue.jpg)
 
-## Start here
+[Feature screenshots](docs/SCREENSHOTS.md) · [Docker walkthrough](docs/DOCKER.md) · [Run without Docker](docs/LOCAL_SETUP.md) · [Architecture](docs/ARCHITECTURE.md)
 
-On this machine the demo database is already migrated and seeded. The development frontend is at **http://127.0.0.1:5173** and the API at **http://127.0.0.1:8000/api/** while their development processes are running. The isolated PostgreSQL cluster lives in `.postgres/` and listens on **127.0.0.1:55439**.
+## Get the code
 
-To restart everything from the project root, open two terminals:
-
-```bash
-# Terminal 1: database and Django
-./scripts/start_local_postgres.sh
-export PGHOST=127.0.0.1 PGPORT=55439 PGDATABASE=inkwell
-source .venv/bin/activate
-cd backend
-python manage.py runserver 127.0.0.1:8000
-```
+Install [Git](https://git-scm.com/downloads) and [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Windows/macOS), or Docker Engine with the Compose plugin (Linux). Start Docker before continuing. Docker supplies Python, Node and PostgreSQL; you do not need to install them separately for this route.
 
 ```bash
-# Terminal 2: React
-cd frontend
-npm run dev
+git clone https://github.com/hell-driver-ujwal/Inkwell_learning_platform-.git inkwell
+cd inkwell
 ```
 
-Open the **Vite address**, not the API address, to use the application. Vite forwards `/api/` requests to Django. Use the same hostname consistently so cookies stay on the same host.
+Alternatively, choose **Code → Download ZIP** on GitHub, extract the archive, and open a terminal in the extracted folder containing `compose.yaml`. The following commands work in PowerShell, macOS Terminal and a Linux shell.
+
+## First run with Docker
+
+Run each command in order from the repository root:
+
+```bash
+docker compose build
+docker compose up -d db --wait
+docker compose run --rm backend python manage.py migrate
+docker compose run --rm backend python manage.py import_legacy_demo --media-source /app/data/demo_media
+docker compose up -d backend frontend
+```
+
+Open **http://127.0.0.1:5174**. The first build can take several minutes. If the page is not ready yet, inspect `docker compose logs --tail=50 backend frontend`.
+
+The import creates synthetic demo accounts/content and copies bundled media into private storage. Run it **once on an empty database**. No original ASP.NET checkout, pre-existing database, private download or machine-specific path is required. To start without demo content, skip the import and create a maintenance account with `docker compose run --rm backend python manage.py createsuperuser`. This creates an active platform Admin account as well as a Django maintenance superuser.
+
+For later sessions:
+
+```bash
+docker compose up -d       # Start the existing application
+docker compose stop        # Stop without deleting database records
+```
+
+Database records persist in a Docker volume. Uploads persist in `backend/private_media/`. Do not use `docker compose down -v` unless you intend to delete the Docker database. This is a **local development configuration**, with demo credentials and Django/Vite development servers; it is not a production deployment recipe.
+
+See [DOCKER.md](docs/DOCKER.md) for an explanation of each step, updates, troubleshooting and tests. Prefer to install the tools yourself? Follow [LOCAL_SETUP.md](docs/LOCAL_SETUP.md).
 
 ## Demo accounts
 
@@ -136,38 +152,14 @@ Example: quiz start returns a server-issued run UUID and start time. Submit that
 
 `App.jsx` defines routes. It does not contain page business logic. Code labs use a sandboxed iframe; lesson Markdown does not execute embedded HTML. Forms have visible labels and native validation in addition to backend validation. Captions, keyboard controls, skip links, reduced-motion behavior and printable certificates are included.
 
-## Fresh installation and PostgreSQL
+## Installation choices
 
-Requirements: Python 3.12 or later, Node.js 22.12 or later, and PostgreSQL. This workspace was verified with Python 3.14, Node 24 and PostgreSQL 17. Exact Python dependencies and the npm lockfile are included.
+| Route | Install on your computer | Guide |
+| --- | --- | --- |
+| Docker (recommended first run) | Git and Docker with Compose | [Docker walkthrough](docs/DOCKER.md) |
+| Native development | Python 3.14, Node.js 24 and PostgreSQL 17 | [Local setup](docs/LOCAL_SETUP.md) |
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r backend/requirements-dev.txt
-cd frontend
-npm ci
-cd ..
-```
-
-For a local PostgreSQL installation with `initdb`, `pg_ctl`, `psql` and `createdb` on PATH:
-
-```bash
-./scripts/start_local_postgres.sh
-export PGHOST=127.0.0.1 PGPORT=55439 PGDATABASE=inkwell
-```
-
-The helper creates an isolated development cluster with local trust authentication and loopback-only listening. It does not modify an existing PostgreSQL service. Do not use this development cluster configuration on a public server.
-
-For your own PostgreSQL server, create a dedicated database and set `PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER` and `PGPASSWORD`. `.env.example` lists the supported variables. Django reads environment variables; it does not silently load `.env` files.
-
-```bash
-cd backend
-python manage.py migrate
-python manage.py import_legacy_demo --media-source /path/to/LearningSystem
-python manage.py runserver 127.0.0.1:8000
-```
-
-The importer refuses to run when users already exist. Do not run it against an existing application database. For model changes, use `python manage.py makemigrations`, review the generated migration, then `python manage.py migrate`.
+Dependencies are pinned in Python requirements and the npm lockfile. `.env.example` documents environment variables; Django does not automatically load `.env` files. The Docker guide does not require creating one because Compose supplies development settings explicitly.
 
 ## Data migration and media
 
@@ -179,7 +171,7 @@ The extraction script **does not execute SQL**. It understands literal `INSERT .
 python scripts/extract_legacy_seed.py /path/to/LearningSystem/Database/CreateDatabase.sql data/legacy_seed.json --date 2026-10-04
 ```
 
-Demo passwords are rehashed through Django using the documented demo password; legacy password hashes are not copied into Django's password field. The command copies `Uploads/` into private media storage. Public fonts and the captioned introduction video are bundled in `frontend/public/` with the font licenses.
+Demo passwords are rehashed through Django using the documented demo password; legacy password hashes are not copied into Django's password field. The import command copies the bundled `data/demo_media/Uploads/` into private media storage when passed `--media-source /app/data/demo_media` in Docker (or `--media-source ../data/demo_media` from `backend/` without Docker). Public fonts and the captioned introduction video are bundled in `frontend/public/` with the font licenses.
 
 **Data boundary:** the `.mdf` files have not been opened or exported. They may contain changes beyond the reproducible SQL seed. Optional presentation seed scripts are not automatically applied because they may duplicate or extend the baseline; they need comparison with a SQL Server export. See [MIGRATION_NOTES.md](docs/MIGRATION_NOTES.md).
 
@@ -187,23 +179,19 @@ Run `python manage.py audit_media` to report missing or unreferenced files. File
 
 ## Testing and quality checks
 
-Latest verification: **72 backend tests passed locally and in Docker**, PostgreSQL migrations applied, Django checks clean, Ruff/ESLint passed, and both frontend production builds passed. See [VERIFICATION.md](docs/VERIFICATION.md) for scope and limitations.
+Application verification on 5 October 2026: **72 backend tests passed locally and in Docker**, PostgreSQL migrations applied, Django checks clean, Ruff/ESLint passed, and both frontend production builds passed. See [VERIFICATION.md](docs/VERIFICATION.md) for scope and limitations.
 
-Run Django tests **from `backend/`** so discovery finds the domain apps:
+With Docker services running, run checks from the repository root:
 
 ```bash
-cd backend
-PGPORT=55439 ../.venv/bin/python manage.py check
-PGPORT=55439 ../.venv/bin/python manage.py test --noinput
-PGPORT=55439 ../.venv/bin/python manage.py makemigrations --check --dry-run
-cd ..
-.venv/bin/ruff check backend scripts
-.venv/bin/ruff format --check backend scripts
-cd frontend
-npm run lint
-npm run format:check
-npm run build
+docker compose exec backend python manage.py check
+docker compose exec backend python manage.py test --noinput
+docker compose exec backend python manage.py makemigrations --check --dry-run
+docker compose exec frontend npm run lint
+docker compose exec frontend npm run build
 ```
+
+Native commands are in [LOCAL_SETUP.md](docs/LOCAL_SETUP.md#testing).
 
 Tests use PostgreSQL, including its constraints and transactions. The database user needs permission to create the temporary `test_inkwell` database. Tests cover role/ownership restrictions, CSRF, lockout, forced password change, paid enrollment, progress, certificates, quiz scoring/timers/limits, all eight game scores, scenario traversal, discussion moderation, upload protection, payment idempotency and authoring/deletion rollback.
 

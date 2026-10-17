@@ -1,0 +1,457 @@
+[
+  {
+    "group": "Public pages",
+    "slug": "home",
+    "title": "Public home and introduction",
+    "route": "/",
+    "preview": false
+  },
+  {
+    "group": "Public pages",
+    "slug": "catalogue",
+    "title": "Searchable course catalogue",
+    "route": "/courses",
+    "preview": false
+  },
+  {
+    "group": "Public pages",
+    "slug": "course-public",
+    "title": "Course introduction and free previews",
+    "route": "/courses/1",
+    "preview": false
+  },
+  {
+    "group": "Public pages",
+    "slug": "login",
+    "title": "Separate role portals",
+    "route": "/login",
+    "preview": false
+  },
+  {
+    "group": "Public pages",
+    "slug": "registration",
+    "title": "Learner registration",
+    "route": "/register",
+    "preview": false
+  },
+  {
+    "group": "Public pages",
+    "slug": "lecturer-registration",
+    "title": "Lecturer application",
+    "route": "/register?role=Teacher",
+    "preview": false
+  },
+  {
+    "group": "Public pages",
+    "slug": "help",
+    "title": "Frequently asked questions",
+    "route": "/help",
+    "preview": false
+  },
+  {
+    "group": "Public pages",
+    "slug": "contact",
+    "title": "Contact form and CAPTCHA",
+    "route": "/contact",
+    "preview": false
+  },
+  {
+    "group": "Public pages",
+    "slug": "about",
+    "title": "About the platform",
+    "route": "/about",
+    "preview": false
+  },
+  {
+    "group": "Public pages",
+    "slug": "privacy",
+    "title": "Privacy information",
+    "route": "/privacy",
+    "preview": false
+  },
+  {
+    "group": "Public pages",
+    "slug": "terms",
+    "title": "Terms information",
+    "route": "/terms",
+    "preview": false
+  },
+  {
+    "group": "Public pages",
+    "slug": "sitemap",
+    "title": "Public site map",
+    "route": "/sitemap",
+    "preview": false
+  },
+  {
+    "group": "Learner workspace",
+    "slug": "learner-dashboard",
+    "title": "Learner dashboard and progress",
+    "route": "/dashboard",
+    "preview": false
+  },
+  {
+    "group": "Learner workspace",
+    "slug": "my-courses",
+    "title": "Enrolled courses",
+    "route": "/my-courses",
+    "preview": false
+  },
+  {
+    "group": "Learner workspace",
+    "slug": "course-progress",
+    "title": "Course curriculum and progress",
+    "route": "/courses/1",
+    "preview": false
+  },
+  {
+    "group": "Learner workspace",
+    "slug": "text-lesson",
+    "title": "Text lesson and navigation",
+    "route": "/lessons/1",
+    "preview": false
+  },
+  {
+    "group": "Learner workspace",
+    "slug": "image-lesson",
+    "title": "Image lesson",
+    "route": "/lessons/2",
+    "preview": false
+  },
+  {
+    "group": "Learner workspace",
+    "slug": "code-lab",
+    "title": "Editable Code Lab",
+    "route": "/lessons/3",
+    "preview": false
+  },
+  {
+    "group": "Learner workspace",
+    "slug": "pdf-lesson",
+    "title": "PDF lesson",
+    "route": "/lessons/8",
+    "preview": false
+  },
+  {
+    "group": "Learner workspace",
+    "slug": "audio-lesson",
+    "title": "Audio lesson",
+    "route": "/lessons/16",
+    "preview": false
+  },
+  {
+    "group": "Learner workspace",
+    "slug": "quiz",
+    "title": "Timed quiz questions",
+    "route": "/activities/1",
+    "preview": false
+  },
+  {
+    "group": "Learner workspace",
+    "slug": "self-assessment",
+    "title": "Confidence self assessment",
+    "route": "/activities/5",
+    "preview": false
+  },
+  {
+    "group": "Learner workspace",
+    "slug": "discussion",
+    "title": "Discussion and replies",
+    "route": "/activities/6",
+    "preview": false
+  },
+  {
+    "group": "Learner workspace",
+    "slug": "results",
+    "title": "Private learning history",
+    "route": "/results",
+    "preview": false
+  },
+  {
+    "group": "Learner workspace",
+    "slug": "quiz-review",
+    "title": "Submitted quiz answer review",
+    "route": "/results/5",
+    "preview": false
+  },
+  {
+    "group": "Learner workspace",
+    "slug": "confidence-history",
+    "title": "Confidence history comparison",
+    "route": "/results/2",
+    "preview": false
+  },
+  {
+    "group": "Learner workspace",
+    "slug": "bookmarks",
+    "title": "Saved lessons",
+    "route": "/bookmarks",
+    "preview": false
+  },
+  {
+    "group": "Learner workspace",
+    "slug": "certificate",
+    "title": "Printable completion certificate",
+    "route": "/courses/16/certificate",
+    "preview": false
+  },
+  {
+    "group": "Learner workspace",
+    "slug": "payments",
+    "title": "Payment history",
+    "route": "/payments",
+    "preview": false
+  },
+  {
+    "group": "Learner workspace",
+    "slug": "checkout",
+    "title": "Local demo checkout",
+    "route": "/courses/5",
+    "preview": false
+  },
+  {
+    "group": "Learner workspace",
+    "slug": "profile",
+    "title": "Profile editing",
+    "route": "/profile",
+    "preview": false
+  },
+  {
+    "group": "Learner workspace",
+    "slug": "password",
+    "title": "Password change form",
+    "route": "/password",
+    "preview": false
+  },
+  {
+    "group": "Learner workspace",
+    "slug": "reviews",
+    "title": "Course review form",
+    "route": "/courses/1",
+    "preview": false
+  },
+  {
+    "group": "Lecturer workspace",
+    "slug": "teacher-dashboard",
+    "title": "Lecturer dashboard",
+    "route": "/dashboard",
+    "preview": false
+  },
+  {
+    "group": "Lecturer workspace",
+    "slug": "course-studio",
+    "title": "Course studio and create form",
+    "route": "/author/courses",
+    "preview": false
+  },
+  {
+    "group": "Lecturer workspace",
+    "slug": "course-builder",
+    "title": "Topics and curriculum authoring",
+    "route": "/author/courses/1",
+    "preview": false
+  },
+  {
+    "group": "Lecturer workspace",
+    "slug": "lesson-editor",
+    "title": "Lesson and upload editor",
+    "route": "/author/lessons/2",
+    "preview": false
+  },
+  {
+    "group": "Lecturer workspace",
+    "slug": "activity-settings",
+    "title": "Activity publication and attempt settings",
+    "route": "/author/activities/1",
+    "preview": false
+  },
+  {
+    "group": "Lecturer workspace",
+    "slug": "quiz-editor",
+    "title": "Quiz questions and answers editor",
+    "route": "/author/activities/1",
+    "preview": false
+  },
+  {
+    "group": "Lecturer workspace",
+    "slug": "assessment-editor",
+    "title": "Confidence statement editor",
+    "route": "/author/activities/5",
+    "preview": false
+  },
+  {
+    "group": "Lecturer workspace",
+    "slug": "game-editor",
+    "title": "Game content editor",
+    "route": "/author/activities/2",
+    "preview": false
+  },
+  {
+    "group": "Lecturer workspace",
+    "slug": "scenario-editor",
+    "title": "Branching scenario editor",
+    "route": "/author/activities/13",
+    "preview": false
+  },
+  {
+    "group": "Lecturer workspace",
+    "slug": "discussion-editor",
+    "title": "Discussion prompt and closure settings",
+    "route": "/author/activities/6",
+    "preview": false
+  },
+  {
+    "group": "Lecturer workspace",
+    "slug": "course-learners",
+    "title": "Course learners and progress",
+    "route": "/author/courses/1/learners",
+    "preview": false
+  },
+  {
+    "group": "Lecturer workspace",
+    "slug": "teacher-results",
+    "title": "Author-scoped results",
+    "route": "/results",
+    "preview": false
+  },
+  {
+    "group": "Administration",
+    "slug": "admin-dashboard",
+    "title": "Administrator overview",
+    "route": "/admin",
+    "preview": false
+  },
+  {
+    "group": "Administration",
+    "slug": "admin-users",
+    "title": "Accounts and lecturer approvals",
+    "route": "/admin/users",
+    "preview": false
+  },
+  {
+    "group": "Administration",
+    "slug": "admin-subjects",
+    "title": "Subject management",
+    "route": "/admin/subjects",
+    "preview": false
+  },
+  {
+    "group": "Administration",
+    "slug": "admin-faqs",
+    "title": "FAQ management",
+    "route": "/admin/faqs",
+    "preview": false
+  },
+  {
+    "group": "Administration",
+    "slug": "admin-courses",
+    "title": "Course oversight",
+    "route": "/admin/courses",
+    "preview": false
+  },
+  {
+    "group": "Administration",
+    "slug": "admin-activities",
+    "title": "Activity oversight",
+    "route": "/admin/activities",
+    "preview": false
+  },
+  {
+    "group": "Administration",
+    "slug": "admin-messages",
+    "title": "Contact inbox",
+    "route": "/admin/messages",
+    "preview": false
+  },
+  {
+    "group": "Administration",
+    "slug": "admin-payments",
+    "title": "Receipt oversight",
+    "route": "/admin/payments",
+    "preview": false
+  },
+  {
+    "group": "Administration",
+    "slug": "analytics",
+    "title": "Page and role analytics",
+    "route": "/admin/analytics",
+    "preview": false
+  },
+  {
+    "group": "Games and scenarios",
+    "slug": "matching",
+    "title": "Matching pairs",
+    "route": "/activities/2?preview=1",
+    "preview": true
+  },
+  {
+    "group": "Games and scenarios",
+    "slug": "sorting",
+    "title": "Sort into groups",
+    "route": "/activities/3?preview=1",
+    "preview": true
+  },
+  {
+    "group": "Games and scenarios",
+    "slug": "fill-blank",
+    "title": "Fill in the blank",
+    "route": "/activities/4?preview=1",
+    "preview": true
+  },
+  {
+    "group": "Games and scenarios",
+    "slug": "true-false",
+    "title": "Timed True/False",
+    "route": "/activities/7?preview=1",
+    "preview": true
+  },
+  {
+    "group": "Games and scenarios",
+    "slug": "sequence",
+    "title": "Sequence ordering",
+    "route": "/activities/8?preview=1",
+    "preview": true
+  },
+  {
+    "group": "Games and scenarios",
+    "slug": "memory",
+    "title": "Memory pairs",
+    "route": "/activities/11?preview=1",
+    "preview": true
+  },
+  {
+    "group": "Games and scenarios",
+    "slug": "flashcards",
+    "title": "Flashcard self-rating",
+    "route": "/activities/16?preview=1",
+    "preview": true
+  },
+  {
+    "group": "Games and scenarios",
+    "slug": "scramble",
+    "title": "Word scramble",
+    "route": "/activities/24?preview=1",
+    "preview": true
+  },
+  {
+    "group": "Games and scenarios",
+    "slug": "scenario",
+    "title": "Branching scenario",
+    "route": "/activities/13?preview=1",
+    "preview": true
+  },
+  {
+    "group": "Lesson formats",
+    "slug": "video-lesson",
+    "title": "Video lesson",
+    "route": "/lessons/33",
+    "preview": false
+  },
+  {
+    "group": "Lesson formats",
+    "slug": "youtube-editor",
+    "title": "YouTube lesson configuration (unsaved editor selection)",
+    "route": "/author/lessons/2",
+    "preview": false
+  }
+]

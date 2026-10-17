@@ -1,5 +1,21 @@
 # Verification record
 
+## Fresh-install documentation check — 17 October 2026
+
+The GitHub onboarding steps were exercised in a separate directory containing only tracked source files and the proposed documentation/demo-media additions. No existing `.venv`, `node_modules`, `.postgres`, or `backend/private_media` directory was copied.
+
+- Both Docker images built from that clean source.
+- A separate, empty PostgreSQL database was created and all migrations applied.
+- The documented seed command imported all demo records and bundled assets.
+- `audit_media` reported **44 referenced files, 0 missing and 0 unreferenced** (four caption sidecars are also copied).
+- Local Markdown image/file links were checked with no missing targets, and screenshots were visually reviewed.
+- The React/Django services started successfully. Temporary verification ports were used to avoid conflicting with other running applications; the documented default remains 5174.
+- **65 screenshots** in [SCREENSHOTS.md](SCREENSHOTS.md) are captured from this isolated synthetic demo, not a user's live database.
+
+No application code was changed in this documentation/media update. The historical application test results below remain dated; fresh-install checks are not a claim of a new exhaustive functional regression run.
+
+## Application verification — 5 October 2026
+
 Recorded **5 October 2026 (Asia/Kathmandu)**. This distinguishes tested behavior from remaining migration boundaries.
 
 ## Executed checks
@@ -50,7 +66,7 @@ Tests use PostgreSQL rather than substituting SQLite. A successful test suite is
 
 Inspected the responsive home/catalogue, imported learner login, course outline and progress, certificate page, Code Lab editing/execution/reset, quiz introduction/settings, and learner result history. The Code Lab test changed only the browser's local editor state and restored the example afterward; no original lesson was overwritten.
 
-![Code Lab execution smoke check](screenshots/code-lab.png)
+Current feature screenshots, including the Code Lab, are in [SCREENSHOTS.md](SCREENSHOTS.md).
 
 Author/admin authorization and creation workflows have API coverage. Exhaustive click-through testing of every author/admin form, every game interaction and every responsive breakpoint is not complete. No formal screen-reader audit was performed.
 
@@ -64,10 +80,10 @@ The SQL Server MDF/LDF files have not been exported. Optional presentation seed/
 
 React reproduces workflows with a rebuilt layout; it does not reproduce every original pixel or all public explanatory copy verbatim. Backend robots/sitemap discovery exists, but the application is client-rendered. The payment gateway remains the original-style local demonstration, not a real financial integration. Production deployment and a production security audit are outside this local development verification.
 
-## Current local addresses
+## Default development addresses
 
-- Existing host-process frontend: `http://127.0.0.1:5173` while its process runs.
-- Docker frontend: `http://127.0.0.1:5174` while Compose runs.
+- Native frontend: `http://127.0.0.1:5173` when started using LOCAL_SETUP.md.
+- Docker frontend: `http://127.0.0.1:5174` when started using DOCKER.md.
 - Docker backend API: `http://127.0.0.1:8001/api/`.
 
 The local and Docker databases are separate. The private media folder is shared from the workspace. `docs/DOCKER.md` explains startup, migration, seed import, logs, testing and safe shutdown.

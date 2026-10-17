@@ -1,0 +1,25 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:10.898
+In this short video, you will write and run your first Python program. It is only three lines long, and we will go through them one at a time.
+
+2
+00:00:11.298 --> 00:00:25.511
+The first line uses print. Print shows a value on the screen. The text Namaste is inside quotation marks, which tells Python it is a piece of text, called a string.
+
+3
+00:00:25.911 --> 00:00:37.514
+The second line asks a question. Input waits for the user to type something and press Enter. Whatever they type is stored in a variable called name.
+
+4
+00:00:37.914 --> 00:00:45.772
+The third line prints a greeting. The plus sign joins the fixed text with the name that the user typed.
+
+5
+00:00:46.172 --> 00:00:56.440
+Save the file as hello dot p y and run it. Python prints Namaste, waits for your name, then greets you by name.
+
+6
+00:00:56.840 --> 00:01:12.428
+If it does not work, check three things. Text must be inside quotes. Python is case sensitive, so print must be lower case. And every opening bracket needs a closing bracket.

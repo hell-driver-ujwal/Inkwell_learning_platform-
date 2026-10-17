@@ -1,5 +1,7 @@
 # Original feature → Django API → React
 
+For a visual tour, see the [feature screenshot gallery](SCREENSHOTS.md). To run the application from a fresh clone, start with [README](../README.md).
+
 This map records implemented counterparts, not a claim that every original browser interaction has been exhaustively regression tested. Paths in the first column are relative to the original LearningSystem. API paths below have the `/api/` prefix. See VERIFICATION.md for actual checks and MIGRATION_NOTES.md for the dataset boundary.
 
 ## Public and account workflows

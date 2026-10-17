@@ -35,11 +35,13 @@ The baseline contains no course reviews or page-view history. New application us
 ## Reproduce the import
 
 1. Create an **empty dedicated database**, configure its PostgreSQL environment variables and run `python manage.py migrate` from `backend/`.
-2. Optionally regenerate the reviewed JSON with the root `scripts/extract_legacy_seed.py` command shown in README.
-3. Run `python manage.py import_legacy_demo --media-source /path/to/LearningSystem`.
+2. Use the bundled `data/legacy_seed.json`. Regenerating it is only for maintainers who have the original source.
+3. From `backend/`, run `python manage.py import_legacy_demo --media-source ../data/demo_media` (or use the Docker command in DOCKER.md).
 4. Run `python manage.py audit_media` and inspect the reported counts.
 
-The command refuses a database that already contains users. It is not a merge command and has no destructive reset mode. Database inserts are one transaction. Media copying occurs after the database commit: if copying fails, fix the source path and copy the original `Uploads/` contents to `backend/private_media/legacy/`; do not delete the database or bypass the existing-user guard just to retry a file copy.
+The command refuses a database that already contains users. It is not a merge command and has no destructive reset mode. Database inserts are one transaction. Media copying occurs after the database commit: if copying fails, fix the source path and copy the bundled `data/demo_media/Uploads/` contents to `backend/private_media/legacy/`; do not delete the database or bypass the existing-user guard just to retry a file copy.
+
+The Git repository includes a seed-only media bundle: 44 referenced assets plus four video caption sidecars, separate from ignored user-upload storage. No original ASP.NET folder is needed for a normal installation.
 
 Paths beginning with `~/Uploads/` become `legacy/` paths under Django's private storage. The original directory is only read. Original captions remain `.vtt` sidecar files. Old storage files are retained after replacement/deletion until a separate audit determines that they are unused.
 

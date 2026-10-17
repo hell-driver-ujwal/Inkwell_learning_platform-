@@ -1,44 +1,37 @@
-# Docker, step by step
+# Run Inkwell with Docker
 
-## Why the application was already working
+This guide starts from a fresh GitHub clone or extracted ZIP. Commands run from the folder containing `compose.yaml` and work in PowerShell, macOS Terminal and Linux shells. No Python, Node or PostgreSQL installation is needed on the host.
 
-During the rebuild, Codex started three ordinary processes on your Mac:
+## 1. Install and start Docker
 
-- PostgreSQL on port **55439**, with database files in `.postgres/`.
-- Django on port **8000**, using Python packages in `.venv/`.
-- Vite on port **5173**, using packages in `frontend/node_modules/`.
-
-The schema had already been migrated and the demonstration dataset imported. The browser was talking to those running processes. Django does not start PostgreSQL automatically, and opening this folder does not start the application. After those processes stop or the computer restarts, you must start them again.
-
-Docker provides another way to run the same source. An **image** is a packaged runtime and dependencies. A **container** is a running instance of that image. **Compose** describes how our three containers connect. A **volume** preserves database files when a container is replaced.
-
-## 1. Open Docker Desktop
-
-Open Docker Desktop from Applications and wait until its engine is running. In Terminal:
+Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) for Windows/macOS, or [Docker Engine](https://docs.docker.com/engine/install/) with the [Compose plugin](https://docs.docker.com/compose/install/) on Linux. Start the engine, then check:
 
 ```bash
 docker version
 docker compose version
 ```
 
-`docker version` should show both Client and Server information. A message about not connecting to `docker.sock` means Docker Desktop's engine is not running yet.
+The first command should show both Client and Server. If it cannot connect to the daemon, start Docker Desktop or your Linux Docker service. Use a current Compose version supporting `up --wait`.
 
-## 2. Open this project in Terminal
+## 2. Clone or extract
 
 ```bash
-cd /Users/ujjwalchhetri/Desktop/Learning_System_with_django
+git clone https://github.com/hell-driver-ujwal/Inkwell_learning_platform-.git inkwell
+cd inkwell
 ```
 
-Run the following commands here, where `compose.yaml` is located. You do not activate `.venv` for Docker commands.
+For a ZIP download, extract it and open a terminal in the extracted folder instead. Confirm that `README.md`, `compose.yaml`, `backend/`, `frontend/` and `data/` are present. You do not activate a Python virtual environment for Docker commands.
 
-## 3. Check the configuration and build the images
+## 3. Build the application images
 
 ```bash
 docker compose config --quiet
 docker compose build
 ```
 
-The first build downloads Python, Node and PostgreSQL images as needed and installs dependencies. Subsequent builds reuse cached layers. `backend/Dockerfile` installs Python requirements; `frontend/Dockerfile` installs the npm lockfile. `.dockerignore` keeps host environments, database files and private media out of the image build context.
+An **image** contains a runtime and dependencies. The backend image installs Python requirements; the frontend installs the npm lockfile. The first build downloads dependencies; later builds reuse cached layers. `.dockerignore` excludes host virtual environments, uploads and local database files.
+
+A **container** is a running instance of an image. **Compose** connects the three services described in `compose.yaml`.
 
 ## 4. Start PostgreSQL
 
@@ -46,122 +39,117 @@ The first build downloads Python, Node and PostgreSQL images as needed and insta
 docker compose up -d db --wait
 ```
 
-`-d` means detached: keep running in the background. `--wait` waits for the configured health check. The `db` service is reachable by other containers as `db:5432`; it is not exposed as a port on your Mac.
+`-d` leaves it running in the background. `--wait` waits for PostgreSQL's health check. A **named volume** stores database files independently of the container.
 
-The database credentials in Compose are local teaching defaults. This setup is for development, not production hosting.
+The database is reachable by other containers at `db:5432`. It is not exposed on a host port. Compose supplies local demonstration credentials; do not reuse this configuration for a public deployment.
 
-## 5. Apply Django migrations
+## 5. Create the database tables
 
 ```bash
 docker compose run --rm backend python manage.py migrate
 ```
 
-`run` starts a one-off backend container, executes the command, and `--rm` removes that temporary container when it finishes. The database survives in its named volume.
+`run` starts a one-off backend container. `--rm` removes that temporary container after the command finishes. Migrations create tables; they do not populate the course library. Database changes are explicit rather than hidden in startup scripts.
 
-Migrations create/update the database tables. They do not import course content. We deliberately do not hide migrations or seeding in the container startup command.
-
-## 6. Import the demonstration data once
-
-For the **first setup of an empty Docker database**:
+## 6. Load the demo and its media once
 
 ```bash
-docker compose run --rm backend python manage.py import_legacy_demo
+docker compose run --rm backend python manage.py import_legacy_demo --media-source /app/data/demo_media
 docker compose run --rm backend python manage.py audit_media
 ```
 
-The existing workspace already has the copied files in `backend/private_media/legacy/`, which the backend bind mount makes available inside the container. The import reads `data/legacy_seed.json` and creates demo records. It refuses to overwrite a database containing users.
+`data/legacy_seed.json` contains the synthetic accounts, courses, activities and history. `data/demo_media/Uploads/` contains their referenced images, PDFs, audio, videos and captions. Compose mounts `data/` at `/app/data`, so the import path above is **inside the container**, independent of your computer's username or checkout location.
 
-If you see “Database already contains users,” the import has already been done. Do not reset the database; proceed to the next step.
-
-For a fresh copy of the source **without media**, first copy the original assets explicitly:
+The media audit should report **zero missing files**. The importer refuses to overwrite a database containing users. On subsequent starts, skip it. If you previously imported records without media, copy the bundled assets without touching records:
 
 ```bash
-mkdir -p backend/private_media/legacy
-cp -R /Users/ujjwalchhetri/Downloads/LearningSystem/Uploads/. backend/private_media/legacy/
+docker compose run --rm backend python -c "import shutil; shutil.copytree('/app/data/demo_media/Uploads', '/app/backend/private_media/legacy', dirs_exist_ok=True)"
 ```
 
-This copies files only. It does not change the original project. Run `audit_media` again afterward.
+Uploaded files persist in the host folder `backend/private_media/`, which is ignored by Git. The versioned demo media is a separate seed copy. The original ASP.NET application is not required.
 
-**The Docker database is separate from the existing local database.** This seed import does not transfer learning activity you subsequently recorded in the local app. A complete transfer of that current database would use an explicit PostgreSQL export/import. Both development modes currently share the same private media folder on the Mac.
-
-## 7. Start Django and React
+## 7. Start the frontend and backend
 
 ```bash
 docker compose up -d backend frontend
 docker compose ps
 ```
 
-Open **http://127.0.0.1:5174**.
+Open **http://127.0.0.1:5174**. Use that same hostname consistently when logging in.
 
-| Service | In the container | On your Mac |
+| Service | Container address | Address on your computer |
 | --- | --- | --- |
-| frontend | Vite on 5173 | http://127.0.0.1:5174 |
-| backend | Django on 8000 | http://127.0.0.1:8001/api/ |
-| db | PostgreSQL on 5432 | Internal Docker network only |
+| React/Vite | `frontend:5173` | http://127.0.0.1:5174 |
+| Django API | `backend:8000` | http://127.0.0.1:8001/api/ |
+| PostgreSQL | `db:5432` | Not exposed |
 
-Use the frontend address for normal use. Its `/api/` requests are proxied to `http://backend:8000`. Inside a container, `localhost` refers to that container itself; this is why the backend connects to `db`, and Vite connects to `backend`.
+Vite forwards `/api/` to Django, so the browser uses same-origin cookies and CSRF protection. Inside a container, `localhost` means that container; Django therefore connects to `db`, not `localhost`. Docker session cookie names differ from native development cookie names.
 
-Django trusts the frontend origin for CSRF. Session cookies are still handled by Django, and the browser sees a same-origin application. Cookies are not isolated by port, so Compose gives the Docker session and CSRF cookies distinct names. This keeps its login separate from the existing local app.
+## 8. Sign in and explore
 
-Demo login: learner **anita.karki@inkwell.test**, password **Password123**. The README lists lecturer and administrator accounts.
+All demo passwords are **Password123**. Choose the corresponding login portal:
 
-## 8. Read logs and run checks
+| Portal | Email |
+| --- | --- |
+| Learner | `anita.karki@inkwell.test` |
+| Lecturer | `asha.sharma@inkwell.test` |
+| Administrator | `admin@inkwell.test` |
+
+The [screenshot tour](SCREENSHOTS.md) shows the main workflows. These are synthetic accounts for local learning. Demo payments do not transfer money: use `9841234567` with code `4567`.
+
+## Daily start, stop and logs
 
 ```bash
+docker compose up -d
+docker compose ps
 docker compose logs --tail=50 backend frontend
 docker compose logs -f backend
+docker compose stop
 ```
 
-Press Ctrl+C to stop following logs; the detached containers keep running.
+Run the command you need, not the whole block as a startup script. Ctrl+C stops following logs; detached containers keep running. Opening a source folder does not start services automatically.
+
+`docker compose down` removes containers/network but retains the database volume. **`docker compose down -v` deletes that database volume.** Never use it as a routine fix for a seed-import error. Back up database records and `backend/private_media/` before destructive maintenance.
+
+## Update after pulling changes
+
+```bash
+git pull
+docker compose build
+docker compose run --rm backend python manage.py migrate
+docker compose up -d
+```
+
+Keep your own uncommitted work safe before pulling. Do not rerun the seed importer. Source edits reload through bind mounts; dependency changes require rebuilding the images. Linux dependencies stay inside images, so host `node_modules` and `.venv` are not mounted into containers.
+
+## Tests
+
+With services running:
 
 ```bash
 docker compose exec backend python manage.py check
 docker compose exec backend python manage.py test --noinput
+docker compose exec backend python manage.py makemigrations --check --dry-run
 docker compose exec frontend npm run lint
 docker compose exec frontend npm run build
 ```
 
-`exec` runs a command in an already-running container. Django tests use a temporary PostgreSQL database; they do not reset the demo database.
+`exec` runs inside an existing container. Tests use a temporary PostgreSQL database, not the demo database. See [VERIFICATION.md](VERIFICATION.md) for recorded results and limits.
 
-## 9. Stop and start on another day
+## Troubleshooting
 
-```bash
-docker compose stop
-```
+| Symptom | What to check |
+| --- | --- |
+| Cannot connect to Docker daemon | Start Docker and rerun `docker version`. |
+| Port 5174 or 8001 already allocated | Stop the conflicting application. If changing ports, update Compose's mapping, `PUBLIC_SITE_URL` and `DJANGO_CSRF_TRUSTED_ORIGINS` together. |
+| Database table does not exist | Run the migration command in step 5. |
+| Empty course library | Import the seed once, as in step 6. |
+| Records exist but images/PDFs fail | Use the media-only copy command in step 6 and rerun `audit_media`. |
+| “Database already contains users” | The importer protects existing data. Skip it; do not erase the database. |
+| CSRF or login error | Use `http://127.0.0.1:5174`, reload the page, and inspect backend logs. |
+| Page temporarily unavailable after startup | Check `docker compose ps` and backend/frontend logs; allow the dev servers to finish starting. |
+| Changed dependencies are not available | Run `docker compose build`, then `docker compose up -d`. |
 
-Then, after opening Docker Desktop another day:
+The supplied setup runs development servers with debugging enabled. Production needs a separate deployment design, private secrets, HTTPS, backups and a production application server.
 
-```bash
-docker compose up -d
-```
-
-You do **not** repeat the seed import. Run migrations again only when new migration files have been added.
-
-`docker compose down` removes this project's containers and network while retaining its named database volume. Avoid `docker compose down -v`: the `-v` flag deletes the database volume and its saved learning history. There is no automatic restart policy; these containers start when you ask Compose to start them.
-
-## Editing code
-
-Backend source and frontend `src/` are bind-mounted, so saved code changes trigger Django/Vite reloads. Python packages and Linux `node_modules` stay inside the images. After changing `requirements.txt` or `package-lock.json`, run:
-
-```bash
-docker compose up -d --build
-```
-
-After changing Django models, generate and inspect migrations:
-
-```bash
-docker compose exec backend python manage.py makemigrations
-docker compose exec backend python manage.py migrate
-```
-
-Generated migration files appear in your workspace because the backend directory is bind-mounted. Never copy the Mac's `.venv` or `node_modules` into a Linux container.
-
-## Files to study
-
-1. `compose.yaml`: services, environment variables, ports, mounts and startup dependency.
-2. `backend/Dockerfile`: how the Python runtime is packaged.
-3. `frontend/Dockerfile`: how the Node runtime is packaged.
-4. `frontend/vite.config.js`: the environment-driven backend proxy.
-5. `backend/config/settings/__init__.py`: database settings read from environment variables.
-
-Official references: [Compose startup order](https://docs.docker.com/compose/how-tos/startup-order/) and [one-off commands with compose run](https://docs.docker.com/reference/cli/docker/compose/run/).
+Official references: [Compose startup order](https://docs.docker.com/compose/how-tos/startup-order/) and [one-off commands](https://docs.docker.com/reference/cli/docker/compose/run/).

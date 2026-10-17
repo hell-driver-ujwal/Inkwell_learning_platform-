@@ -1,6 +1,6 @@
 # Finding your way around the project
 
-Start with the root README for installation and the learning path. The original ASP.NET application is outside this directory and remains the reference implementation.
+Start with the root README for installation and the learning path. The original ASP.NET application supplied the behavioral reference; the bundled demo runs independently of that source.
 
 ## Top level
 
@@ -8,9 +8,10 @@ Start with the root README for installation and the learning path. The original 
 | --- | --- |
 | `backend/` | Django application source and migrations |
 | `frontend/` | React source, Vite configuration and npm lockfile |
+| `data/demo_media/Uploads/` | Versioned demo assets copied explicitly during import; not live user uploads |
 | `data/legacy_seed.json` | Portable literal seed snapshot, not application configuration |
 | `scripts/` | Explicit one-off import preparation and local database setup |
-| `docs/` | Architecture, feature mapping, migration notes and verification evidence |
+| `docs/` | Docker/native setup, screenshot gallery, architecture, feature mapping, migration notes and verification evidence |
 | `.env.example` | Supported environment variable examples; not loaded automatically |
 | `pyproject.toml` | Python formatting and lint rules |
 | `.venv/` | Generated Python environment; recreate from requirements |
@@ -84,4 +85,4 @@ For a new course action, put request validation in the courses serializer, autho
 
 ## Docker development
 
-`compose.yaml` connects PostgreSQL, Django and Vite. Each application has a `Dockerfile`; `.dockerignore` excludes generated/private host files from images. Read `docs/DOCKER.md` for a command-by-command explanation. Database records persist in a named Docker volume, while source and private media are bind-mounted from this workspace. The original local PostgreSQL cluster is a separate database.
+`compose.yaml` connects PostgreSQL, Django and Vite. Each application has a `Dockerfile`; `.dockerignore` excludes generated/private host files from images. Read `docs/DOCKER.md` for a command-by-command explanation. Database records persist in a named Docker volume, while source and private media are bind-mounted from this workspace. A native PostgreSQL installation and the Docker database are separate databases; neither is assumed to exist before setup.

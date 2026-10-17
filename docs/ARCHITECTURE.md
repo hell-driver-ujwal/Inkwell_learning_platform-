@@ -1,6 +1,6 @@
 # Architecture and implementation plan
 
-The original application at `/Users/ujjwalchhetri/Downloads/LearningSystem` is a read-only reference. This directory is the separate rewrite.
+This repository is a separate Django/React rebuild of the original ASP.NET LearningSystem. The original source was used as a read-only behavioral reference; it is not required to run the bundled demo.
 
 ## Source inspection
 
