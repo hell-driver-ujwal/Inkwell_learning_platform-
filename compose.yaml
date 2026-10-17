@@ -1,0 +1,63 @@
+# Development containers. Migrations and demo import are deliberate one-off commands.
+name: inkwell-learning
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: inkwell
+      POSTGRES_USER: inkwell
+      POSTGRES_PASSWORD: local-docker-development-only
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U inkwell -d inkwell"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      PGHOST: db
+      PGPORT: "5432"
+      PGDATABASE: inkwell
+      PGUSER: inkwell
+      PGPASSWORD: local-docker-development-only
+      DJANGO_DEBUG: "1"
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,backend
+      DJANGO_CSRF_TRUSTED_ORIGINS: http://localhost:5174,http://127.0.0.1:5174
+      DJANGO_SESSION_COOKIE_NAME: inkwell_docker_sessionid
+      DJANGO_CSRF_COOKIE_NAME: inkwell_docker_csrftoken
+      PUBLIC_SITE_URL: http://127.0.0.1:5174
+    ports:
+      - "127.0.0.1:8001:8000"
+    volumes:
+      # This also keeps private_media on the host when a container is replaced.
+      - ./backend:/app/backend
+      - ./data:/app/data:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    environment:
+      API_PROXY_TARGET: http://backend:8000
+    ports:
+      - "127.0.0.1:5174:5173"
+    volumes:
+      # Dependencies remain inside the Linux image; do not mount macOS node_modules.
+      - ./frontend/src:/app/frontend/src
+      - ./frontend/public:/app/frontend/public:ro
+      - ./frontend/index.html:/app/frontend/index.html:ro
+      - ./frontend/vite.config.js:/app/frontend/vite.config.js:ro
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

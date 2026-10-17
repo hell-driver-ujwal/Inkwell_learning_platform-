@@ -1,0 +1,12 @@
+.git
+.venv
+.postgres
+**/__pycache__
+**/*.pyc
+**/node_modules
+frontend/dist
+backend/private_media
+backend/staticfiles
+.env
+*.log
+docs
